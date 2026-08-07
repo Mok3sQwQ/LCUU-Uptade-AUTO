@@ -59,7 +59,6 @@ jobs:
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Create publication reminder
-        if: steps.commit.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REPORT_TITLE: "Publish LCUU tier update for ${{ steps.date.outputs.display_month }}"
@@ -67,5 +66,12 @@ jobs:
         run: |
           EXISTING_ISSUES=$(gh issue list --state open --search "$REPORT_TITLE in:title" --json number --jq 'length')
           if [ "$EXISTING_ISSUES" -eq 0 ]; then
-            gh issue create --title "$REPORT_TITLE" --body-file tier_shift_report.txt
+            {
+              echo "Review the report below, then publish it manually to Smogon."
+              echo
+              echo '```text'
+              cat tier_shift_report.txt
+              echo '```'
+            } > issue_body.md
+            gh issue create --title "$REPORT_TITLE" --body-file issue_body.md
           fi
