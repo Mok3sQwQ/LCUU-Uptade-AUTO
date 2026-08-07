@@ -1,0 +1,71 @@
+name: Monthly Tier Update
+
+on:
+  schedule:
+    - cron: "0 8 2 * *"
+  workflow_dispatch:
+    inputs:
+      stats_date:
+        description: "Stats month to process (YYYY-MM). Leave blank to use the previous month."
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  update-tiers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Select stats month
+        id: date
+        shell: bash
+        run: |
+          STATS_MONTH="${{ inputs.stats_date }}"
+          if [ -z "$STATS_MONTH" ]; then
+            STATS_MONTH=$(date -u -d "$(date -u +%Y-%m-01) -1 month" +%Y-%m)
+          fi
+          DISPLAY_MONTH=$(date -u -d "${STATS_MONTH}-01 +1 month" +"%B %Y")
+          echo "stats_month=$STATS_MONTH" >> "$GITHUB_OUTPUT"
+          echo "display_month=$DISPLAY_MONTH" >> "$GITHUB_OUTPUT"
+
+      - name: Download stats and update tier data
+        run: python tier_updater.py --date "${{ steps.date.outputs.stats_month }}" --strict-download
+
+      - name: Commit updated tier data
+        id: commit
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add stats.txt tier_shift_report.txt tiers.json
+          git add tiers_backup_*.json 2>/dev/null || true
+          git commit -m "Update LC tiers for ${{ steps.date.outputs.display_month }}"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create publication reminder
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPORT_TITLE: "Publish LCUU tier update for ${{ steps.date.outputs.display_month }}"
+        shell: bash
+        run: |
+          EXISTING_ISSUES=$(gh issue list --state open --search "$REPORT_TITLE in:title" --json number --jq 'length')
+          if [ "$EXISTING_ISSUES" -eq 0 ]; then
+            gh issue create --title "$REPORT_TITLE" --body-file tier_shift_report.txt
+          fi

@@ -1,0 +1,20 @@
+========== TIER SHIFT REPORT ==========
+
+[SPOILER="Base Data"]
+
+Cycle: Q3 - Month 2 (August)
+
+Mode: Quick Drops Only (Rises Locked)
+
+Teams Parameter (T): 16 (base_t * 2)
+
+Applied Cutoff: 4.24%
+
+[/SPOILER]
+
+**Rises (To LC OU):**
+None (Rises are locked for this cycle phase)
+
+**Drops (From LC OU):**
+None
+=======================================
