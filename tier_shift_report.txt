@@ -2,13 +2,13 @@
 
 [SPOILER="Base Data"]
 
-Cycle: Q3 - Month 2 (August)
+Cycle: Q3 - Month 3 (September)
 
 Mode: Quick Drops Only (Rises Locked)
 
-Teams Parameter (T): 16 (base_t * 2)
+Teams Parameter (T): 24 (base_t * 3)
 
-Applied Cutoff: 4.24%
+Applied Cutoff: 2.85%
 
 [/SPOILER]
 
