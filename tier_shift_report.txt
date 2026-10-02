@@ -2,13 +2,13 @@
 
 [SPOILER="Base Data"]
 
-Cycle: Q3 - Month 3 (September)
+Cycle: Q4 - Month 1 (October)
 
 Mode: Quick Drops Only (Rises Locked)
 
-Teams Parameter (T): 24 (base_t * 3)
+Teams Parameter (T): 8 (base_t)
 
-Applied Cutoff: 2.85%
+Applied Cutoff: 8.30%
 
 [/SPOILER]
 
@@ -16,5 +16,7 @@ Applied Cutoff: 2.85%
 None (Rises are locked for this cycle phase)
 
 **Drops (From LC OU):**
-None
+:diglett-alola: Diglett-Alola (6.43%)
+:shellos: Shellos (4.16%)
+:stunky: Stunky (8.24%)
 =======================================
